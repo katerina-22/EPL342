@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
+    <div class="login-page">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,8 +17,9 @@
 <body>
 
     <div class="container" id="container">
+         <!-- Sign Up Form -->
         <div class="form-container sign-up">
-            <form>
+            <form method="POST" action="register.php">
                 <h1>Create Account</h1>
                 <span>Register with Username</span>
                 <input type="text" placeholder="Name">
@@ -26,21 +27,24 @@
                 <input type="password" placeholder="Enter Password">
                 <button>Sign Up</button>
             </form>
-        </div>
+        </div><input type="text" name="username" placeholder="Enter Username" required>
+        <input type="password" name="password" placeholder="Enter Password" required>
+        <button type="submit">Sign Up</button>
+    </form>
 
-
+ <!-- Sign In Form -->
         <div class="form-container sign-in">
-            <form>
+            <form method="POST" action="login.php">
                 <h1>Sign In</h1>
                 <span>Login With Username & Password</span>
-                <input type="username" placeholder="Enter Username">
-                <input type="password" placeholder="Enter Password">
+                <input type="text" name="username" placeholder="Enter Username" required>
+                <input type="password" name="password" placeholder="Enter Password" required>
                 <a href="#">Forget Password?</a>
-                <button>Sign In</button>
+                <button type="submit">Sign In</button>
             </form>
         </div>
 
-
+ <!-- Toggle Panels -->
         <div class="toggle-container">
             <div class="toggle">
                 <div class="toggle-panel toggle-left">
@@ -59,5 +63,5 @@
 
     <script src="script.js"></script>
 </body>
-
+</div>
 </html>

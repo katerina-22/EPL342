@@ -1,0 +1,100 @@
+<!-- 
+LT: leitourgos Tmimatos Odikon Metaforon
+-> elexos aitiseon - prosvasi stis aitisis
+-> eisagogi apotelesmaton / eggrafon
+-->
+<!DOCTYPE html>
+<html lang="en">
+    <div class="lt-home-page">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LT Home Page</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Container -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="form-container welcome-section">
+            <h1>Welcome, LT User!</h1>
+            <p>Manage and verify applications along with their supporting documents.</p>
+        </div>
+
+        <!-- Check Applications Section -->
+        <div class="form-container sign-up">
+            <form method="POST" action="check_applications.php">
+                <h1>Check Applications</h1>
+                <span>Search and verify submitted applications</span>
+
+                <label for="applicationId">Application ID:</label>
+                <input type="text" id="applicationId" name="applicationId" placeholder="Enter Application ID" required>
+
+                <label for="comments">Verification Comments:</label>
+                <textarea id="comments" name="comments" rows="5" placeholder="Enter verification details..." required></textarea>
+
+                <button type="submit">Verify Application</button>
+            </form>
+        </div>
+
+        <!-- Upload Supporting Documents Section -->
+        <div class="form-container sign-in">
+            <h1>Upload Supporting Documents</h1>
+            <form method="POST" action="upload_supporting_documents.php" enctype="multipart/form-data">
+                <label for="documentType">Document Type:</label>
+                <select id="documentType" name="documentType" required>
+                    <option value="Inspection Report">Inspection Report</option>
+                    <option value="Approval Certificate">Approval Certificate</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label for="file">Choose File:</label>
+                <input type="file" id="file" name="file" required>
+
+                <button type="submit">Upload Document</button>
+            </form>
+        </div>
+
+        <!-- View Submitted Applications Section -->
+        <div class="form-container profile-section">
+            <h1>Verified Applications</h1>
+            <table class="applications-table">
+                <thead>
+                    <tr>
+                        <th>Application ID</th>
+                        <th>Status</th>
+                        <th>Verified On</th>
+                        <th>Comments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>32145</td>
+                        <td>Approved</td>
+                        <td>2024-12-01</td>
+                        <td>All documents verified</td>
+                    </tr>
+                    <tr>
+                        <td>67890</td>
+                        <td>Rejected</td>
+                        <td>2024-11-25</td>
+                        <td>Missing documents</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="form-container profile-section">
+            <h1>My Profile</h1>
+            <p><strong>Username:</strong> lt_user</p>
+            <p><strong>Email:</strong> lt_user@example.com</p>
+            <p><strong>Registered On:</strong> 2024-01-15</p>
+            <a href="login.html" class="logout-link">Logout</a>
+        </div>
+    </div>
+</body>
+</div>
+</html>

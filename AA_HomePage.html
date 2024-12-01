@@ -1,0 +1,104 @@
+<!-- 
+AA: antiprosopos autokiniton
+-> diaxiris paraggelion: aitisis
+-> istoriko katastasis 
+-->
+<!DOCTYPE html>
+<html lang="en">
+    <div class="aa-home-page">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AA Home Page</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Container -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="form-container welcome-section">
+            <h1>Welcome, AA User!</h1>
+            <p>Manage your vehicle orders and upload required documents here.</p>
+        </div>
+
+        <!-- Manage Orders Section -->
+        <div class="form-container sign-up">
+            <form method="POST" action="manage_orders.php">
+                <h1>Manage Orders</h1>
+                <span>View, create, or update vehicle orders</span>
+
+                <label for="orderType">Order Type:</label>
+                <select id="orderType" name="orderType" required>
+                    <option value="New">New Order</option>
+                    <option value="Update">Update Existing Order</option>
+                    <option value="Cancel">Cancel Order</option>
+                </select>
+
+                <label for="orderDetails">Order Details:</label>
+                <textarea id="orderDetails" name="orderDetails" rows="5" placeholder="Enter details about the order..." required></textarea>
+
+                <button type="submit">Submit Order</button>
+            </form>
+        </div>
+
+        <!-- Upload Documents Section -->
+        <div class="form-container sign-in">
+            <h1>Upload Documents</h1>
+            <form method="POST" action="upload_documents.php" enctype="multipart/form-data">
+                <label for="documentType">Document Type:</label>
+                <select id="documentType" name="documentType" required>
+                    <option value="Invoice">Invoice</option>
+                    <option value="Vehicle Registration">Vehicle Registration</option>
+                    <option value="Warranty">Warranty Document</option>
+                </select>
+
+                <label for="file">Choose File:</label>
+                <input type="file" id="file" name="file" required>
+
+                <button type="submit">Upload Document</button>
+            </form>
+        </div>
+
+        <!-- View Submitted Orders Section -->
+        <div class="form-container profile-section">
+            <h1>Submitted Orders</h1>
+            <table class="applications-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Submitted On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>54321</td>
+                        <td>New</td>
+                        <td>Pending</td>
+                        <td>2024-12-01</td>
+                    </tr>
+                    <tr>
+                        <td>98765</td>
+                        <td>Update</td>
+                        <td>Approved</td>
+                        <td>2024-11-20</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="form-container profile-section">
+            <h1>My Profile</h1>
+            <p><strong>Username:</strong> aa_user</p>
+            <p><strong>Email:</strong> aa_user@example.com</p>
+            <p><strong>Registered On:</strong> 2024-01-15</p>
+            <a href="login.html" class="logout-link">Logout</a>
+        </div>
+    </div>
+</body>
+</div>
+</html>

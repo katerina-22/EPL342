@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="signup-page">
+        <div class="container">
+            <div class="form-container">
+                <h1>Create an Account</h1>
+                <p>Fill in the details below to create your account.</p>
+                <form method="POST" action="register_user.php">
+                    <!-- Name -->
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+
+                    <!-- Phone Number -->
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+
+                    <!-- Birthdate -->
+                    <label for="birthdate">Birthdate:</label>
+                    <input type="date" id="birthdate" name="birthdate" required>
+
+                    <!-- Address -->
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address" placeholder="Enter your address" required>
+
+                    <!-- User Type -->
+                    <label for="type">User Type:</label>
+                    <select id="type" name="type" required>
+                        <option value="AX">AX (Simple User)</option>
+                        <option value="AA">AA (Vehicle Representative)</option>
+                        <option value="LT">LT (Road Transport Official)</option>
+                    </select>
+
+                    <!-- Unique ID -->
+                    <label for="unique_id">Unique ID:</label>
+                    <input type="text" id="unique_id" name="unique_id" placeholder="Enter a unique ID" required>
+
+                    <!-- Username -->
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" required>
+
+                    <!-- Password -->
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required>
+
+                    <!-- Submit Button -->
+                    <button type="submit">Sign Up</button>
+                </form>
+                <p>Already have an account? <a href="login.html">Login here</a>.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <div class="ax-home-page">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AX Home Page</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Container -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="form-container welcome-section">
+            <h1>Welcome, AX User!</h1>
+            <p>Manage your grant applications here.</p>
+        </div>
+
+        <!-- Application Submission Section -->
+        <div class="form-container sign-up">
+            <form method="POST" action="submit_application.php">
+                <h1>Submit Application</h1>
+                <span>Complete the details below</span>
+
+                <label for="applicationType">Application Type:</label>
+                <select id="applicationType" name="applicationType" required>
+                    <option value="Type1">Type 1</option>
+                    <option value="Type2">Type 2</option>
+                    <option value="Type3">Type 3</option>
+                </select>
+
+                <label for="details">Application Details:</label>
+                <textarea id="details" name="details" rows="5" placeholder="Enter details about your application..." required></textarea>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <!-- View Applications Section -->
+        <div class="form-container sign-in">
+            <h1>My Applications</h1>
+            <table class="applications-table">
+                <thead>
+                    <tr>
+                        <th>Application ID</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Submitted On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>12345</td>
+                        <td>Type 1</td>
+                        <td>Pending</td>
+                        <td>2024-11-30</td>
+                    </tr>
+                    <tr>
+                        <td>67890</td>
+                        <td>Type 2</td>
+                        <td>Approved</td>
+                        <td>2024-11-20</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="form-container profile-section">
+            <h1>My Profile</h1>
+            <p><strong>Username:</strong> ax_user</p>
+            <p><strong>Email:</strong> ax_user@example.com</p>
+            <p><strong>Registered On:</strong> 2024-01-15</p>
+            <a href="login.html" class="logout-link">Logout</a>
+        </div>
+    </div>
+</body>
+</div>
+</html>
