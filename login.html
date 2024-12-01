@@ -1,38 +1,16 @@
-<!-- Login page. According to the username the user will be navigated to their home page -->
-
 <!DOCTYPE html>
 <html lang="en">
-    <div class="login-page">
+<div class="login-page">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="style.css">
-
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>        <!--https://boxicons.com/ -->
-
-    <title>Login & Register Page </title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Login Page</title>
 </head>
-
 <body>
-
     <div class="container" id="container">
-         <!-- Sign Up Form -->
-        <div class="form-container sign-up">
-            <form method="POST" action="register.php">
-                <h1>Create Account</h1>
-                <span>Register with Username</span>
-                <input type="text" placeholder="Name">
-                <input type="username" placeholder="Enter Username">
-                <input type="password" placeholder="Enter Password">
-                <button>Sign Up</button>
-            </form>
-        </div><input type="text" name="username" placeholder="Enter Username" required>
-        <input type="password" name="password" placeholder="Enter Password" required>
-        <button type="submit">Sign Up</button>
-    </form>
-
- <!-- Sign In Form -->
+         <!-- Sign In Form -->
         <div class="form-container sign-in">
             <form method="POST" action="login.php">
                 <h1>Sign In</h1>
@@ -44,18 +22,16 @@
             </form>
         </div>
 
- <!-- Toggle Panels -->
+        <!-- Toggle Panels -->
         <div class="toggle-container">
             <div class="toggle">
-                <div class="toggle-panel toggle-left">
-                    <h1> 'Εχετε ήδη λογαριασμό; <br> Συνδεθείτε για να...οδηγήσετε</h1>
-                    <p>Sign in With ID & Passowrd</p>
-                    <button class="hidden" id="login">Sign In</button>
-                </div>
+                <!-- Right Panel -->
                 <div class="toggle-panel toggle-right">
-                    <h1>Καλως ορίσατε!</h1>
-                    <p>Εγγραφείτε για να...οδηγήσετε</p>
-                    <button class="hidden" id="register">Sign Up</button>
+                    <h1>Don’t have an account?</h1>
+                    <p>Create an account by signing up</p>
+                    <a href="SignUp.html">
+                        <button class="hidden" id="register">Sign Up</button>
+                    </a>
                 </div>
             </div>
         </div>
