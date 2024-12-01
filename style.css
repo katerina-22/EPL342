@@ -1,6 +1,6 @@
+/* General Styles for Pages */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-/* General Styles for Pages */
 * {
     margin: 0;
     padding: 0;
@@ -28,6 +28,10 @@
     padding: 20px; /* Padding inside the container */
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    justify-content: center; /* Center content vertically */
 }
 
 .login-page .container p {
@@ -210,6 +214,7 @@
     right: 0;
     transform: translateX(0);
 }
+
 
 /* Sign Up Page Styles */
 .signup-page .container {
