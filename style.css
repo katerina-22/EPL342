@@ -19,11 +19,18 @@
 }
 
 .login-page .container {
-    background-color: #fff;
+   /* background-color: #fff;
     border-radius: 30px;
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-    width: 768px; /* Fixed width */
-    max-width: 100%; /* Responsive for smaller screens */
+    width: 768px;
+    max-width: 100%; 
+    */ 
+background-color: #fff;
+border-radius: 20px;
+padding: 30px;
+max-width: 600px;
+margin: 50px auto;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     min-height: 480px; /* Fixed height */
     padding: 20px; /* Padding inside the container */
     position: relative;
