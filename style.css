@@ -14,7 +14,7 @@
     display: flex;
     align-items: center; /* Center vertically */
     justify-content: center; /* Center horizontally */
-    height: 100vh;
+    height: 100%;
     margin: 0;
 }
 
@@ -225,6 +225,7 @@
     max-width: 600px;
     margin: 50px auto;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    height: 100%;
 }
 
 .signup-page h1 {
@@ -290,6 +291,7 @@
 .ax-home-page {
     background-color: #f5f5f5;
     padding: 20px;
+    height: 100%;
 }
 
 .ax-home-page .container {
@@ -342,6 +344,7 @@
 .aa-home-page {
     background-color: #f5f5f5;
     padding: 20px;
+    height: 100%;
 }
 
 .aa-home-page .container {
@@ -395,6 +398,7 @@
 .lt-home-page {
     background-color: #f5f5f5;
     padding: 20px;
+    height: 100%;
 }
 
 .lt-home-page .container {

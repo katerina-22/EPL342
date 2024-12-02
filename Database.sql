@@ -1,6 +1,4 @@
---TABLE CREATION:
-
--- User table creation with constraint to indicate type
+-- User table creation with constraints
 CREATE TABLE [dbo].[USER] (
     [ID] INT NOT NULL PRIMARY KEY,
     [Name] NVARCHAR(100) NOT NULL,
@@ -9,8 +7,17 @@ CREATE TABLE [dbo].[USER] (
     [Phone_Number] NVARCHAR(15) NOT NULL,
     [Role_Type] NVARCHAR(50) NOT NULL CHECK ([Role_Type] IN ('Physical', 'Company')), -- User role constraint
     [Username] NVARCHAR(50) NOT NULL UNIQUE,
-    [Password] NVARCHAR(50) NOT NULL
+    [Password] NVARCHAR(50) NOT NULL,
+    [Email] NVARCHAR(100) NOT NULL,
+    [DOCUMENT#] INT NULL FOREIGN KEY REFERENCES [DOCUMENTS]([DOCUMENT#]) ON UPDATE CASCADE -- On cascade update of documents
 );
+
+ALTER TABLE [dbo].[USER]
+ADD [Permission] NVARCHAR(5) NOT NULL DEFAULT 'ΦΥ'
+    CHECK ([Permission] IN (N’ΦΥ', N’ΑΑ’,N 'ΛΤ', N’ΑΧ'));
+
+-- Create an index on the USER table to improve query performance
+CREATE INDEX IDX_User_Role_Type ON [dbo].[USER] ([Role_Type]);
 
 -- Documents table
 CREATE TABLE [dbo].[DOCUMENTS] (
@@ -18,7 +25,11 @@ CREATE TABLE [dbo].[DOCUMENTS] (
     [TYPE] NVARCHAR(50) NOT NULL
 );
 
--- Subsity Categories table with allowed categories only
+ALTER TABLE [dbo].[DOCUMENTS]
+ADD [File] VARBINARY(MAX) NULL;
+
+
+-- Subsity Categories table with allowed categories
 CREATE TABLE [dbo].[SUBSITY_CATEGORIES] (
     [CATEGORY_NUMBER] NVARCHAR(10) NOT NULL PRIMARY KEY CHECK ([CATEGORY_NUMBER] IN ('Γ1', 'Γ2', 'Γ3', 'Γ4', 'Γ5', 'Γ6', 'Γ7', 'Γ8', 'Γ10', 'Γ11', 'Γ12', 'Γ13', 'Γ14')),
     [AMOUNT] DECIMAL(10, 2) NOT NULL,
@@ -32,20 +43,21 @@ CREATE TABLE [dbo].[CRITERIA_FOR_VALIDATION] (
     [CATEGORY_NUMBER] NVARCHAR(10) NOT NULL FOREIGN KEY REFERENCES [dbo].[SUBSITY_CATEGORIES]([CATEGORY_NUMBER])
 );
 
--- Terms & Conditions table
-CREATE TABLE [dbo].[TERMS_AND_CONDITIONS] (
-    [TERM_ID] INT NOT NULL PRIMARY KEY,
-    [DESCRIPTION] NVARCHAR(255) NOT NULL
-);
 
--- Application table with constraints for physical and company users
+-- Application table with enhancements
 CREATE TABLE [dbo].[APPLICATION] (
-    [APPLICATION#] INT NOT NULL PRIMARY KEY,
+    [APPLICATION#] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     [DATE] SMALLDATETIME NOT NULL,
-    [ID] INT NOT NULL FOREIGN KEY REFERENCES [dbo].[USER]([ID]),
+    [ID] INT NOT NULL FOREIGN KEY REFERENCES [dbo].[USER]([ID]) ON DELETE CASCADE, -- On delete of user, delete all their applications
     [CATEGORY_NUMBER] NVARCHAR(10) NOT NULL FOREIGN KEY REFERENCES [dbo].[SUBSITY_CATEGORIES]([CATEGORY_NUMBER]),
+    [Status] NVARCHAR(50) NOT NULL DEFAULT 'Pending Review', -- Default status is 'Pending Review'
     CHECK ([CATEGORY_NUMBER] IN ('Γ1', 'Γ2', 'Γ3', 'Γ4', 'Γ5', 'Γ6', 'Γ7', 'Γ8', 'Γ10', 'Γ11', 'Γ12', 'Γ13', 'Γ14'))
 );
+
+
+ALTER TABLE [dbo].[APPLICATION]
+ADD CONSTRAINT DF_Application_Date DEFAULT ('2025-01-01') FOR [DATE];
+
 
 -- Vehicles table
 CREATE TABLE [dbo].[VEHICLES] (
@@ -89,184 +101,132 @@ ADD CONSTRAINT FK_User_Type_Application_Limit CHECK (
 
 
 
+INSERT INTO [dbo].[USER] (
+    [ID],
+    [Name],
+    [Birthdate],
+    [Address],
+    [Phone_Number],
+    [Role_Type],
+    [Username],
+    [Password],
+    [Email],
+    [Permission]
+)
+VALUES (
+    1063940,
+    N'Κληρίδης Χριστόδουλος - Γλαύκος',
+    '2002-10-11', -- Use ISO format YYYY-MM-DD
+    N'Αργυρωκάστρου 5, Στρόβολος, Λευκωσία, 2064',
+    N'+35799643634',
+    N'Physical',
+    N'ccleri02',
+    N'Xgk!cs2002',
+    N'christodoulosclerides@gmail.com',
+    N'ΦΥ'
+);
 
--- TRIGGERS:
--- 1. -- Trigger to enforce a maximum of 20 applications per company user
--- CREATE TRIGGER trg_CompanyUserApplicationLimit
--- ON [dbo].[APPLICATION]
--- AFTER INSERT
--- AS
--- BEGIN
---     DECLARE @userID INT;
+-- Application 1 (Category Γ1 - Allowed for physical users, tests single application constraint)
+INSERT INTO [dbo].[APPLICATION] ([DATE], [ID], [CATEGORY_NUMBER], [Status]) 
+VALUES ('2025-01-01', 1063940, N'Γ1', N'Pending for Review');
 
---     SELECT @userID = [ID]
---     FROM inserted;
+-- Application 2 (Category Γ2 - Allowed for physical users, tests category limit)
+INSERT INTO [dbo].[APPLICATION] ([DATE], [ID], [CATEGORY_NUMBER], [Status]) 
+VALUES ('2025-01-02', 1063940, N'Γ2', N'Pending for Review');
 
---     -- Check if the user is a company user
---     IF EXISTS (SELECT 1 FROM [dbo].[USER] WHERE [ID] = @userID AND [Role_Type] = 'Company')
---     BEGIN
---         -- Enforce a maximum of 20 applications for company users
---         IF (SELECT COUNT(*) FROM [dbo].[APPLICATION] WHERE [ID] = @userID) > 20
---         BEGIN
---             RAISERROR ('Company users can submit a maximum of 20 applications.', 16, 1);
---             ROLLBACK TRANSACTION;
---         END
---     END
--- END;
+-- Application 3 (Category Γ14 - Allowed for physical users, tests special case category limit)
+INSERT INTO [dbo].[APPLICATION] ([DATE], [ID], [CATEGORY_NUMBER], [Status]) 
+VALUES ('2025-01-03', 1063940, N'Γ14', N'Pending for Review');
 
--- -- Trigger to enforce application limits for Physical users
--- CREATE TRIGGER trg_PhysicalUserApplicationLimit
--- ON [dbo].[APPLICATION]
--- AFTER INSERT
--- AS
--- BEGIN
---     DECLARE @userID INT;
---     DECLARE @category NVARCHAR(10);
+-- Application 4 (Category Γ5 - Not allowed for physical users, should fail)
+INSERT INTO [dbo].[APPLICATION] ([DATE], [ID], [CATEGORY_NUMBER], [Status]) 
+VALUES ('2025-01-04', 1063940, N'Γ5', N'Pending for Review');
 
---     SELECT @userID = [ID], @category = [CATEGORY_NUMBER]
---     FROM inserted;
+-- Application 5 (Category Γ1 - Duplicate test for the same category, should fail)
+INSERT INTO [dbo].[APPLICATION] ([DATE], [ID], [CATEGORY_NUMBER], [Status]) 
+VALUES ('2025-01-05', 1063940, N'Γ1', N'Pending for Review');
 
---     -- Check if the user is a physical user
---     IF EXISTS (SELECT 1 FROM [dbo].[USER] WHERE [ID] = @userID AND [Role_Type] = 'Physical')
---     BEGIN
---         -- Enforce limit of 1 application per category for categories Γ1 - Γ8, Γ10 - Γ13
---         IF @category IN ('Γ1', 'Γ2', 'Γ3', 'Γ4', 'Γ5', 'Γ6', 'Γ7', 'Γ8', 'Γ10', 'Γ11', 'Γ12', 'Γ13')
---         BEGIN
---             IF EXISTS (SELECT 1 FROM [dbo].[APPLICATION] WHERE [ID] = @userID AND [CATEGORY_NUMBER] = @category)
---             BEGIN
---                 RAISERROR ('Physical users can only submit one application per category for Γ1 - Γ8, Γ10 - Γ13.', 16, 1);
---                 ROLLBACK TRANSACTION;
---             END
---         END
-        
---         -- Enforce a single application for category Γ14
---         IF @category = 'Γ14'
---         BEGIN
---             IF EXISTS (SELECT 1 FROM [dbo].[APPLICATION] WHERE [ID] = @userID AND [CATEGORY_NUMBER] = 'Γ14')
---             BEGIN
---                 RAISERROR ('Physical users can only submit one application for category Γ14.', 16, 1);
---                 ROLLBACK TRANSACTION;
---             END
---         END
-
---         -- Enforce a single application for category Γ15
---         IF @category = 'Γ15'
---         BEGIN
---             IF EXISTS (SELECT 1 FROM [dbo].[APPLICATION] WHERE [ID] = @userID AND [CATEGORY_NUMBER] = 'Γ15')
---             BEGIN
---                 RAISERROR ('Physical users can only submit one application for category Γ15.', 16, 1);
---                 ROLLBACK TRANSACTION;
---             END
---         END
---     END
--- END;
+-- Insert subsidy categories with descriptions into SUBSITY_CATEGORIES
+INSERT INTO [dbo].[SUBSITY_CATEGORIES] ([CATEGORY_NUMBER], [DESCRIPTION], [AMOUNT], [AVAILABLE_SUBSITY_NUMBER])
+VALUES
+(N'Γ1', N'Απόσυρση και αντικατάσταση με καινούργιο όχημα ιδιωτικής χρήσης χαμηλών εκπομπών CO2 (μέχρι 50 γρ/χλμ)', 7500.00, 1228),
+(N'Γ2', N'Απόσυρση και αντικατάσταση με καινούργιο όχημα ταξί χαμηλών εκπομπών CO2 (μέχρι 50 γρ/χλμ)', 12000.00, 30),
+(N'Γ3', N'Απόσυρση και αντικατάσταση με καινούργιο όχημα χαμηλών εκπομπών CO2 (μέχρι 50 γρ/χλμ) για δικαιούχο αναπηρικού οχήματος', 15000.00, 30),
+(N'Γ4', N'Απόσυρση και αντικατάσταση με καινούργιο όχημα χαμηλών εκπομπών CO2 (μέχρι 50 γρ/χλμ) πολύτεκνης οικογένειας', 15000.00, 30),
+(N'Γ5', N'Χορηγία για αγορά καινούργιου οχήματος ιδιωτικής χρήσης μηδενικών εκπομπών CO2', 9000.00, 1827),
+(N'Γ6', N'Χορηγία για αγορά καινούργιου οχήματος ταξί μηδενικών εκπομπών CO2', 20000.00, 60),
+(N'Γ7', N'Χορηγία για αγορά καινούργιου οχήματος μηδενικών εκπομπών CO2 για δικαιούχο αναπηρικού οχήματος', 20000.00, 60),
+(N'Γ8', N'Χορηγία για αγορά καινούργιου οχήματος μηδενικών εκπομπών CO2 πολύτεκνης οικογένειας', 20000.00, 60),
+(N'Γ9', N'Χορηγία για αγορά μεταχειρισμένου οχήματος μηδενικών εκπομπών CO2', 9000.00, 104),
+(N'Γ10', N'Χορηγία για αγορά καινούργιου ηλεκτρικού οχήματος της κατηγορίας Ν1 (οχήματα μικτού βάρους μέχρι 3.500 κιλά)', 15000.00, 185),
+(N'Γ11', N'Χορηγία για αγορά καινούργιου ηλεκτρικού οχήματος της κατηγορίας Ν2 (οχήματα μικτού βάρους που δεν υπερβαίνει τα 3.500 κιλά αλλά δεν υπερβαίνει τα 12.000 κιλά)', 25000.00, 4);
+(N'Γ12', N'Χορηγία για αγορά καινούργιου οχήματος κατηγορίας M2 μηδενικών εκπομπών CO2 (μικρό λεωφορείο το οποίο περιλαμβάνει περισσότερες από οκτώ θέσεις καθημένων πέραν του καθίσματος του οδηγού και έχει μέγιστη μάζα το πολύ 5 τόνους)', 40000.00, 2),
+(N'Γ13', N'Χορηγία για αγορά καινούργιου οχήματος μηδενικών εκπομπών CO2 κατηγορίας L6e (υποκατηγορία «Β») και L7e (υποκατηγορία «C»)', 4000.00, 65),
+(N'Γ14', N'Χορηγία για αγορά καινούργιου οχήματος μηδενικών εκπομπών CO2 κατηγορίας L (εξαιρουμένων των οχημάτων κατηγορίας L6e (υποκατηγορία «Β») και L7e (υποκατηγορία «Β και C»))', 1500.00, 893);
 
 
 
+CREATE TRIGGER trg_Validate_Phone_Number
+ON [dbo].[USER]
+AFTER INSERT, UPDATE
+AS
+BEGIN
+  IF EXISTS (
+       SELECT 1
+         FROM [INSERTED]
+         WHERE [Phone_Number] NOT LIKE '+357%' AND [Phone_Number] NOT LIKE '+30%'
+     )
+     BEGIN
+         RAISERROR ('Phone number must start with +357 or +30.', 16, 1);
+         ROLLBACK TRANSACTION;
+     END
+ END;
+ GO
 
 
--- ENTRY GENERATING SCRIPT:
+-- Drop the existing trigger if it exists
+IF EXISTS (SELECT * FROM sys.triggers WHERE name = 'trg_Application_Limit')
+BEGIN
+    DROP TRIGGER trg_Application_Limit;
+END;
 
--- -- Step 1: Generate 10,000 Users (70% physical, 30% company)
--- DECLARE @TotalUsers INT = 10000;
--- DECLARE @CompanyRatio FLOAT = 0.3; -- 30% companies
--- DECLARE @PhysicalRatio FLOAT = 1 - @CompanyRatio;
--- DECLARE @CompanyUsers INT = FLOOR(@TotalUsers * @CompanyRatio);
--- DECLARE @PhysicalUsers INT = @TotalUsers - @CompanyUsers;
--- DECLARE @UserId INT = 1;
+-- Create the updated trigger for enforcing application limits
+CREATE TRIGGER trg_Application_Limit
+ON [dbo].[APPLICATION]
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @UserID INT;
+    DECLARE @Category NVARCHAR(10);
 
--- -- Insert Physical Users
--- WHILE @UserId <= @PhysicalUsers
--- BEGIN
---     INSERT INTO [dbo].[USER] ([ID], [Name], [Birthdate], [Address], [Phone_Number], [Role_Type], [Username], [Password])
---     VALUES (@UserId, CONCAT('PhysicalUser', @UserId), DATEADD(YEAR, -20 - (ABS(CHECKSUM(NEWID())) % 30), GETDATE()),
---             CONCAT('Address ', @UserId), CONCAT('Phone', RIGHT(CONVERT(VARCHAR, ABS(CHECKSUM(NEWID()))), 8)), 'Physical',
---             CONCAT('physuser', @UserId), CONCAT('pass', @UserId));
---     SET @UserId = @UserId + 1;
--- END
+    -- Get inserted row data
+    SELECT @UserID = ID, @Category = CATEGORY_NUMBER
+    FROM INSERTED;
 
--- -- Insert Company Users
--- WHILE @UserId <= @TotalUsers
--- BEGIN
---     INSERT INTO [dbo].[USER] ([ID], [Name], [Birthdate], [Address], [Phone_Number], [Role_Type], [Username], [Password])
---     VALUES (@UserId, CONCAT('CompanyUser', @UserId), DATEADD(YEAR, -50 - (ABS(CHECKSUM(NEWID())) % 30), GETDATE()),
---             CONCAT('CompanyAddress ', @UserId), CONCAT('Phone', RIGHT(CONVERT(VARCHAR, ABS(CHECKSUM(NEWID()))), 8)), 'Company',
---             CONCAT('compuser', @UserId), CONCAT('compass', @UserId));
---     SET @UserId = @UserId + 1;
--- END;
-
--- PRINT 'Users generated successfully.';
-
--- -- Step 2: Generate Applications
--- -- Define categories as per requirements
--- DECLARE @Categories TABLE (Category NVARCHAR(10));
--- INSERT INTO @Categories (Category) VALUES 
--- ('Γ1'), ('Γ2'), ('Γ3'), ('Γ4'), ('Γ5'), ('Γ6'), ('Γ7'), ('Γ8'), 
--- ('Γ10'), ('Γ11'), ('Γ12'), ('Γ13'), ('Γ14'), ('Γ15');
-
--- DECLARE @ApplicationID INT = 1;
-
--- -- Insert applications for Company Users
--- DECLARE @CurrentCompanyUserID INT = @PhysicalUsers + 1;
--- WHILE @CurrentCompanyUserID <= @TotalUsers
--- BEGIN
---     DECLARE @ApplicationsCount INT = 0;
-
---     -- Company can have up to 20 applications in random categories
---     WHILE @ApplicationsCount < 20
---     BEGIN
---         DECLARE @Category NVARCHAR(10) = (SELECT TOP 1 Category FROM @Categories ORDER BY NEWID());
-        
---         IF NOT EXISTS (SELECT 1 FROM [dbo].[APPLICATION] WHERE [ID] = @CurrentCompanyUserID AND [CATEGORY_NUMBER] = @Category)
---         BEGIN
---             INSERT INTO [dbo].[APPLICATION] ([APPLICATION_ID], [ID], [CATEGORY_NUMBER])
---             VALUES (@ApplicationID, @CurrentCompanyUserID, @Category);
-            
---             SET @ApplicationID = @ApplicationID + 1;
---             SET @ApplicationsCount = @ApplicationsCount + 1;
---         END
---     END
-
---     SET @CurrentCompanyUserID = @CurrentCompanyUserID + 1;
--- END;
-
--- PRINT 'Company applications generated successfully.';
-
--- -- Insert applications for Physical Users
--- DECLARE @CurrentPhysicalUserID INT = 1;
-
--- WHILE @CurrentPhysicalUserID <= @PhysicalUsers
--- BEGIN
---     -- Physical users: Add one application for each category in Γ1-Γ8, Γ10-Γ13
---     DECLARE @MainCategory NVARCHAR(10) = (SELECT TOP 1 Category FROM @Categories WHERE Category IN ('Γ1', 'Γ2', 'Γ3', 'Γ4', 'Γ5', 'Γ6', 'Γ7', 'Γ8', 'Γ10', 'Γ11', 'Γ12', 'Γ13') ORDER BY NEWID());
-
---     IF NOT EXISTS (SELECT 1 FROM [dbo].[APPLICATION] WHERE [ID] = @CurrentPhysicalUserID AND [CATEGORY_NUMBER] = @MainCategory)
---     BEGIN
---         INSERT INTO [dbo].[APPLICATION] ([APPLICATION_ID], [ID], [CATEGORY_NUMBER])
---         VALUES (@ApplicationID, @CurrentPhysicalUserID, @MainCategory);
-
---         SET @ApplicationID = @ApplicationID + 1;
---     END
-
---     -- Add one application for category Γ14
---     IF NOT EXISTS (SELECT 1 FROM [dbo].[APPLICATION] WHERE [ID] = @CurrentPhysicalUserID AND [CATEGORY_NUMBER] = 'Γ14')
---     BEGIN
---         INSERT INTO [dbo].[APPLICATION] ([APPLICATION_ID], [ID], [CATEGORY_NUMBER])
---         VALUES (@ApplicationID, @CurrentPhysicalUserID, 'Γ14');
-
---         SET @ApplicationID = @ApplicationID + 1;
---     END
-
---     -- Add one application for category Γ15
---     IF NOT EXISTS (SELECT 1 FROM [dbo].[APPLICATION] WHERE [ID] = @CurrentPhysicalUserID AND [CATEGORY_NUMBER] = 'Γ15')
---     BEGIN
---         INSERT INTO [dbo].[APPLICATION] ([APPLICATION_ID], [ID], [CATEGORY_NUMBER])
---         VALUES (@ApplicationID, @CurrentPhysicalUserID, 'Γ15');
-
---         SET @ApplicationID = @ApplicationID + 1;
---     END
-
---     SET @CurrentPhysicalUserID = @CurrentPhysicalUserID + 1;
--- END;
-
--- PRINT 'Physical user applications generated successfully.';
+    -- Check if the user is physical
+    IF EXISTS (SELECT 1 FROM [dbo].[USER] WHERE ID = @UserID AND Role_Type = 'Physical')
+    BEGIN
+        -- Check for applications in categories N'Γ1' to N'Γ13' (allow only one per user) and N'Γ14' (allow only one)
+        IF @Category IN (N'Γ1', N'Γ2', N'Γ3', N'Γ4', N'Γ5', N'Γ6', N'Γ7', N'Γ8', N'Γ9', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')
+        BEGIN
+            IF (SELECT COUNT(*) FROM [dbo].[APPLICATION] WHERE ID = @UserID AND CATEGORY_NUMBER IN (N'Γ1', N'Γ2', N'Γ3', N'Γ4', N'Γ5', N'Γ6', N'Γ7', N'Γ8', N'Γ9', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')) > 2
+            BEGIN
+                RAISERROR('Physical user can only submit one application for each category Γ1 to Γ13 and one for Γ14.', 16, 1);
+                ROLLBACK;
+            END
+        END
+    END
+    -- Check if the user is a company
+    ELSE IF EXISTS (SELECT 1 FROM [dbo].[USER] WHERE ID = @UserID AND Role_Type = 'Company')
+    BEGIN
+        -- Check for applications in categories N'Γ1', N'Γ2', N'Γ5', N'Γ6', N'Γ10' to N'Γ14' (allow up to 20 per user)
+        IF @Category IN (N'Γ1', N'Γ2', N'Γ5', N'Γ6', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')
+        BEGIN
+            IF (SELECT COUNT(*) FROM [dbo].[APPLICATION] WHERE ID = @UserID AND CATEGORY_NUMBER IN (N'Γ1', N'Γ2', N'Γ5', N'Γ6', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')) >= 20
+            BEGIN
+                RAISERROR('Company user can only submit up to 20 applications for categories Γ1, Γ2, Γ5, Γ6, and Γ10 to Γ14.', 16, 1);
+                ROLLBACK;
+            END
+        END
+    END
+END;
