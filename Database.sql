@@ -1,3 +1,8 @@
+-- Documents table
+CREATE TABLE [dbo].[DOCUMENTS] (
+    [DOCUMENT#] INT NOT NULL PRIMARY KEY,
+    [TYPE] NVARCHAR(50) NOT NULL
+);
 -- User table creation with constraints
 CREATE TABLE [dbo].[USER] (
     [ID] INT NOT NULL PRIMARY KEY,
@@ -11,23 +16,6 @@ CREATE TABLE [dbo].[USER] (
     [Email] NVARCHAR(100) NOT NULL,
     [DOCUMENT#] INT NULL FOREIGN KEY REFERENCES [DOCUMENTS]([DOCUMENT#]) ON UPDATE CASCADE -- On cascade update of documents
 );
-
-ALTER TABLE [dbo].[USER]
-ADD [Permission] NVARCHAR(5) NOT NULL DEFAULT 'ΦΥ'
-    CHECK ([Permission] IN (N’ΦΥ', N’ΑΑ’,N 'ΛΤ', N’ΑΧ'));
-
--- Create an index on the USER table to improve query performance
-CREATE INDEX IDX_User_Role_Type ON [dbo].[USER] ([Role_Type]);
-
--- Documents table
-CREATE TABLE [dbo].[DOCUMENTS] (
-    [DOCUMENT#] INT NOT NULL PRIMARY KEY,
-    [TYPE] NVARCHAR(50) NOT NULL
-);
-
-ALTER TABLE [dbo].[DOCUMENTS]
-ADD [File] VARBINARY(MAX) NULL;
-
 
 -- Subsity Categories table with allowed categories
 CREATE TABLE [dbo].[SUBSITY_CATEGORIES] (
@@ -55,8 +43,12 @@ CREATE TABLE [dbo].[APPLICATION] (
 );
 
 
-ALTER TABLE [dbo].[APPLICATION]
-ADD CONSTRAINT DF_Application_Date DEFAULT ('2025-01-01') FOR [DATE];
+-- Vehicle Order table
+CREATE TABLE [dbo].[VEHICLE_ORDER] (
+    [ORDER#] INT NOT NULL PRIMARY KEY,
+    [ORDER_DATE] SMALLDATETIME NOT NULL,
+    [APPLICATION#] INT NOT NULL FOREIGN KEY REFERENCES [dbo].[APPLICATION]([APPLICATION#])
+);
 
 
 -- Vehicles table
@@ -69,13 +61,6 @@ CREATE TABLE [dbo].[VEHICLES] (
     [ORDER#] INT NOT NULL FOREIGN KEY REFERENCES [dbo].[VEHICLE_ORDER]([ORDER#])
 );
 
--- Vehicle Order table
-CREATE TABLE [dbo].[VEHICLE_ORDER] (
-    [ORDER#] INT NOT NULL PRIMARY KEY,
-    [ORDER_DATE] SMALLDATETIME NOT NULL,
-    [APPLICATION#] INT NOT NULL FOREIGN KEY REFERENCES [dbo].[APPLICATION]([APPLICATION#])
-);
-
 -- Change table
 CREATE TABLE [dbo].[CHANGE] (
     [CHANGE#] INT NOT NULL PRIMARY KEY,
@@ -85,6 +70,21 @@ CREATE TABLE [dbo].[CHANGE] (
     [Status] NVARCHAR(50) NOT NULL,
     [APPLICATION#] INT NOT NULL FOREIGN KEY REFERENCES [dbo].[APPLICATION]([APPLICATION#])
 );
+
+
+ALTER TABLE [dbo].[USER]
+ADD [Permission] NVARCHAR(5) NOT NULL DEFAULT 'ΦΥ'
+    CHECK ([Permission] IN (N'ΦΥ', N'ΑΑ',N'ΛΤ', N'ΑΧ'));
+
+ALTER TABLE [dbo].[DOCUMENTS]
+ADD [File] VARBINARY(MAX) NULL;
+
+ALTER TABLE [dbo].[APPLICATION]
+ADD CONSTRAINT DF_Application_Date DEFAULT ('2025-01-01') FOR [DATE];
+
+
+-- done
+
 
 -- Constraints for application limits per user type
 ALTER TABLE [dbo].[APPLICATION]
@@ -100,6 +100,8 @@ ADD CONSTRAINT FK_User_Type_Application_Limit CHECK (
 );
 
 
+-- Create an index on the USER table to improve query performance
+CREATE INDEX IDX_User_Role_Type ON [dbo].[USER] ([Role_Type]);
 
 INSERT INTO [dbo].[USER] (
     [ID],
@@ -159,74 +161,7 @@ VALUES
 (N'Γ8', N'Χορηγία για αγορά καινούργιου οχήματος μηδενικών εκπομπών CO2 πολύτεκνης οικογένειας', 20000.00, 60),
 (N'Γ9', N'Χορηγία για αγορά μεταχειρισμένου οχήματος μηδενικών εκπομπών CO2', 9000.00, 104),
 (N'Γ10', N'Χορηγία για αγορά καινούργιου ηλεκτρικού οχήματος της κατηγορίας Ν1 (οχήματα μικτού βάρους μέχρι 3.500 κιλά)', 15000.00, 185),
-(N'Γ11', N'Χορηγία για αγορά καινούργιου ηλεκτρικού οχήματος της κατηγορίας Ν2 (οχήματα μικτού βάρους που δεν υπερβαίνει τα 3.500 κιλά αλλά δεν υπερβαίνει τα 12.000 κιλά)', 25000.00, 4);
+(N'Γ11', N'Χορηγία για αγορά καινούργιου ηλεκτρικού οχήματος της κατηγορίας Ν2 (οχήματα μικτού βάρους που δεν υπερβαίνει τα 3.500 κιλά αλλά δεν υπερβαίνει τα 12.000 κιλά)', 25000.00, 4),
 (N'Γ12', N'Χορηγία για αγορά καινούργιου οχήματος κατηγορίας M2 μηδενικών εκπομπών CO2 (μικρό λεωφορείο το οποίο περιλαμβάνει περισσότερες από οκτώ θέσεις καθημένων πέραν του καθίσματος του οδηγού και έχει μέγιστη μάζα το πολύ 5 τόνους)', 40000.00, 2),
 (N'Γ13', N'Χορηγία για αγορά καινούργιου οχήματος μηδενικών εκπομπών CO2 κατηγορίας L6e (υποκατηγορία «Β») και L7e (υποκατηγορία «C»)', 4000.00, 65),
 (N'Γ14', N'Χορηγία για αγορά καινούργιου οχήματος μηδενικών εκπομπών CO2 κατηγορίας L (εξαιρουμένων των οχημάτων κατηγορίας L6e (υποκατηγορία «Β») και L7e (υποκατηγορία «Β και C»))', 1500.00, 893);
-
-
-
-CREATE TRIGGER trg_Validate_Phone_Number
-ON [dbo].[USER]
-AFTER INSERT, UPDATE
-AS
-BEGIN
-  IF EXISTS (
-       SELECT 1
-         FROM [INSERTED]
-         WHERE [Phone_Number] NOT LIKE '+357%' AND [Phone_Number] NOT LIKE '+30%'
-     )
-     BEGIN
-         RAISERROR ('Phone number must start with +357 or +30.', 16, 1);
-         ROLLBACK TRANSACTION;
-     END
- END;
- GO
-
-
--- Drop the existing trigger if it exists
-IF EXISTS (SELECT * FROM sys.triggers WHERE name = 'trg_Application_Limit')
-BEGIN
-    DROP TRIGGER trg_Application_Limit;
-END;
-
--- Create the updated trigger for enforcing application limits
-CREATE TRIGGER trg_Application_Limit
-ON [dbo].[APPLICATION]
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @UserID INT;
-    DECLARE @Category NVARCHAR(10);
-
-    -- Get inserted row data
-    SELECT @UserID = ID, @Category = CATEGORY_NUMBER
-    FROM INSERTED;
-
-    -- Check if the user is physical
-    IF EXISTS (SELECT 1 FROM [dbo].[USER] WHERE ID = @UserID AND Role_Type = 'Physical')
-    BEGIN
-        -- Check for applications in categories N'Γ1' to N'Γ13' (allow only one per user) and N'Γ14' (allow only one)
-        IF @Category IN (N'Γ1', N'Γ2', N'Γ3', N'Γ4', N'Γ5', N'Γ6', N'Γ7', N'Γ8', N'Γ9', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')
-        BEGIN
-            IF (SELECT COUNT(*) FROM [dbo].[APPLICATION] WHERE ID = @UserID AND CATEGORY_NUMBER IN (N'Γ1', N'Γ2', N'Γ3', N'Γ4', N'Γ5', N'Γ6', N'Γ7', N'Γ8', N'Γ9', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')) > 2
-            BEGIN
-                RAISERROR('Physical user can only submit one application for each category Γ1 to Γ13 and one for Γ14.', 16, 1);
-                ROLLBACK;
-            END
-        END
-    END
-    -- Check if the user is a company
-    ELSE IF EXISTS (SELECT 1 FROM [dbo].[USER] WHERE ID = @UserID AND Role_Type = 'Company')
-    BEGIN
-        -- Check for applications in categories N'Γ1', N'Γ2', N'Γ5', N'Γ6', N'Γ10' to N'Γ14' (allow up to 20 per user)
-        IF @Category IN (N'Γ1', N'Γ2', N'Γ5', N'Γ6', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')
-        BEGIN
-            IF (SELECT COUNT(*) FROM [dbo].[APPLICATION] WHERE ID = @UserID AND CATEGORY_NUMBER IN (N'Γ1', N'Γ2', N'Γ5', N'Γ6', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')) >= 20
-            BEGIN
-                RAISERROR('Company user can only submit up to 20 applications for categories Γ1, Γ2, Γ5, Γ6, and Γ10 to Γ14.', 16, 1);
-                ROLLBACK;
-            END
-        END
-    END
-END;
