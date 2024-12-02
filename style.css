@@ -338,37 +338,10 @@
 .ax-home-page .applications-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
-
 /* AA Home Page Styles */
-.aa-home-page .container {
-    background-color: #fff;
-    border-radius: 20px;
+.aa-home-page {
+    background-color: #f5f5f5;
     padding: 20px;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.aa-home-page .welcome-section h1 {
-    font-size: 24px;
-    font-weight: bold;
-    color: blue;
-    margin-bottom: 10px;
-}
-
-.aa-home-page .applications-table th {
-    background-color: blue;
-    color: white;
-    text-align: left;
-    padding: 10px;
-}
-
-.aa-home-page .applications-table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-}
-
-.aa-home-page .applications-table tr:nth-child(even) {
-    background-color: #f9f9f9;
 }
 
 .aa-home-page .container {
@@ -379,11 +352,27 @@
     margin: 0 auto;
 }
 
+.aa-home-page .welcome-section {
+    text-align: center;
+    padding: 20px;
+}
+
 .aa-home-page .welcome-section h1 {
     font-size: 24px;
     font-weight: bold;
     color: blue;
     margin-bottom: 10px;
+}
+
+.aa-home-page .welcome-section p {
+    font-size: 16px;
+    color: #555;
+}
+
+.aa-home-page .applications-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
 }
 
 .aa-home-page .applications-table th {
@@ -403,6 +392,11 @@
 }
 
 /* LT Home Page Styles */
+.lt-home-page {
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
 .lt-home-page .container {
     background-color: #fff;
     border-radius: 20px;
@@ -411,11 +405,27 @@
     margin: 0 auto;
 }
 
+.lt-home-page .welcome-section {
+    text-align: center;
+    padding: 20px;
+}
+
 .lt-home-page .welcome-section h1 {
     font-size: 24px;
     font-weight: bold;
     color: blue;
     margin-bottom: 10px;
+}
+
+.lt-home-page .welcome-section p {
+    font-size: 16px;
+    color: #555;
+}
+
+.lt-home-page .applications-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
 }
 
 .lt-home-page .applications-table th {
@@ -433,4 +443,3 @@
 .lt-home-page .applications-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
-
