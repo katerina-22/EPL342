@@ -83,9 +83,75 @@ ALTER TABLE [dbo].[APPLICATION]
 ADD CONSTRAINT DF_Application_Date DEFAULT ('2025-01-01') FOR [DATE];
 
 
+-- Create an index on the USER table to improve query performance
+CREATE INDEX IDX_User_Role_Type ON [dbo].[USER] ([Role_Type]);
+
+-- -- Create the updated trigger for enforcing application limits
+-- CREATE TRIGGER trg_Application_Limit
+-- ON [dbo].[APPLICATION]
+-- AFTER INSERT
+-- AS
+-- BEGIN
+--     DECLARE @UserID INT;
+--     DECLARE @Category NVARCHAR(10);
+
+--     -- Get inserted row data
+--     SELECT @UserID = ID, @Category = CATEGORY_NUMBER
+--     FROM INSERTED;
+
+--     -- Check if the user is physical
+--     IF EXISTS (SELECT 1 FROM [dbo].[USER] WHERE ID = @UserID AND Role_Type = 'Physical')
+--     BEGIN
+--         -- Check for applications in categories N'Γ1' to N'Γ13' (allow only one per user) and N'Γ14' (allow only one)
+--         IF @Category IN (N'Γ1', N'Γ2', N'Γ3', N'Γ4', N'Γ5', N'Γ6', N'Γ7', N'Γ8', N'Γ9', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')
+--         BEGIN
+--             IF (SELECT COUNT(*) FROM [dbo].[APPLICATION] WHERE ID = @UserID AND CATEGORY_NUMBER IN (N'Γ1', N'Γ2', N'Γ3', N'Γ4', N'Γ5', N'Γ6', N'Γ7', N'Γ8', N'Γ9', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')) > 2
+--             BEGIN
+--                 RAISERROR('Physical user can only submit one application for each category Γ1 to Γ13 and one for Γ14.', 16, 1);
+--                 ROLLBACK;
+--             END
+--         END
+--     END
+--     -- Check if the user is a company
+--     ELSE IF EXISTS (SELECT 1 FROM [dbo].[USER] WHERE ID = @UserID AND Role_Type = 'Company')
+--     BEGIN
+--         -- Check for applications in categories N'Γ1', N'Γ2', N'Γ5', N'Γ6', N'Γ10' to N'Γ14' (allow up to 20 per user)
+--         IF @Category IN (N'Γ1', N'Γ2', N'Γ5', N'Γ6', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')
+--         BEGIN
+--             IF (SELECT COUNT(*) FROM [dbo].[APPLICATION] WHERE ID = @UserID AND CATEGORY_NUMBER IN (N'Γ1', N'Γ2', N'Γ5', N'Γ6', N'Γ10', N'Γ11', N'Γ12', N'Γ13', N'Γ14')) >= 20
+--             BEGIN
+--                 RAISERROR('Company user can only submit up to 20 applications for categories Γ1, Γ2, Γ5, Γ6, and Γ10 to Γ14.', 16, 1);
+--                 ROLLBACK;
+--             END
+--         END
+--     END
+-- END;
+-- CREATE TRIGGER trg_Validate_Phone_Number
+-- ON [dbo].[USER]
+-- AFTER INSERT, UPDATE
+-- AS
+-- BEGIN
+--   IF EXISTS (
+--        SELECT 1
+--          FROM [INSERTED]
+--          WHERE [Phone_Number] NOT LIKE '+357%' AND [Phone_Number] NOT LIKE '+30%'
+--      )
+--      BEGIN
+--          RAISERROR ('Phone number must start with +357 or +30.', 16, 1);
+--          ROLLBACK TRANSACTION;
+--      END
+--  END;
+--  GO
+
+
+-- Drop the existing trigger if it exists
+IF EXISTS (SELECT * FROM sys.triggers WHERE name = 'trg_Application_Limit')
+BEGIN
+    DROP TRIGGER trg_Application_Limit;
+END;
 -- done
 
-
+-- dont do it
 -- Constraints for application limits per user type
 ALTER TABLE [dbo].[APPLICATION]
 ADD CONSTRAINT FK_User_Type_Application_Limit CHECK (
@@ -98,10 +164,8 @@ ADD CONSTRAINT FK_User_Type_Application_Limit CHECK (
         (SELECT COUNT(*) FROM [dbo].[APPLICATION] WHERE [ID] = [APPLICATION].[ID]) <= 20
     )
 );
+-- 
 
-
--- Create an index on the USER table to improve query performance
-CREATE INDEX IDX_User_Role_Type ON [dbo].[USER] ([Role_Type]);
 
 INSERT INTO [dbo].[USER] (
     [ID],
