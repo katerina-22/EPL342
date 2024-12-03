@@ -10,16 +10,28 @@
 </head>
 
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo"> </div>
+        <ul>
+            <li><a href="#welcome-section">Welcome</a></li>
+            <li><a href="#submit-application-section">Submit Application</a></li>
+            <li><a href="#my-applications-section">My Applications</a></li>
+            <li><a href="#profile-section">Profile</a></li>
+            <li><a href="login.html">Logout</a></li>
+        </ul>
+    </nav>
+
     <!-- Container -->
     <div class="container">
         <!-- Welcome Section -->
-        <div class="form-container welcome-section">
-            <h1>Welcome, AX User!</h1>
+        <div class="form-container welcome-section" id="welcome-section">
+            <h1>Welcome! Access and manage your services with ease!</h1>
             <p>Manage your grant applications here.</p>
         </div>
 
         <!-- Application Submission Section -->
-        <div class="form-container sign-up">
+        <div class="form-container sign-up" id="submit-application-section">
             <form method="POST" action="submit_application.php">
                 <h1>Submit Application</h1>
                 <span>Complete the details below</span>
@@ -39,7 +51,7 @@
         </div>
 
         <!-- View Applications Section -->
-        <div class="form-container sign-in">
+        <div class="form-container sign-in" id="my-applications-section">
             <h1>My Applications</h1>
             <table class="applications-table">
                 <thead>
@@ -68,7 +80,7 @@
         </div>
 
         <!-- Profile Section -->
-        <div class="form-container profile-section">
+        <div class="form-container profile-section" id="profile-section">
             <h1>My Profile</h1>
             <p><strong>Username:</strong> ax_user</p>
             <p><strong>Email:</strong> ax_user@example.com</p>

@@ -1,4 +1,3 @@
-<!--AA: antiprosopos autokiniton-->
 <!DOCTYPE html>
 <html lang="en">
     <div class="aa-home-page">
@@ -11,16 +10,29 @@
 </head>
 
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo"> Car Dealers Portal</div>
+        <ul>
+            <li><a href="#welcome-section">Welcome</a></li>
+            <li><a href="#manage-orders-section">Manage Orders</a></li>
+            <li><a href="#upload-documents-section">Upload Documents</a></li>
+            <li><a href="#submitted-orders-section">Submitted Orders</a></li>
+            <li><a href="#profile-section">Profile</a></li>
+            <li><a href="login.html">Logout</a></li>
+        </ul>
+    </nav>
+
     <!-- Container -->
     <div class="container">
         <!-- Welcome Section -->
-        <div class="form-container welcome-section">
-            <h1>Welcome, AA User!</h1>
+        <div class="form-container welcome-section" id="welcome-section">
+            <h1>Welcome! Submit and track your vehicle orders effortlessly!</h1>
             <p>Manage your vehicle orders and upload required documents here.</p>
         </div>
 
         <!-- Manage Orders Section -->
-        <div class="form-container sign-up">
+        <div class="form-container sign-up" id="manage-orders-section">
             <form method="POST" action="manage_orders.php">
                 <h1>Manage Orders</h1>
                 <span>View, create, or update vehicle orders</span>
@@ -40,7 +52,7 @@
         </div>
 
         <!-- Upload Documents Section -->
-        <div class="form-container sign-in">
+        <div class="form-container sign-in" id="upload-documents-section">
             <h1>Upload Documents</h1>
             <form method="POST" action="upload_documents.php" enctype="multipart/form-data">
                 <label for="documentType">Document Type:</label>
@@ -58,7 +70,7 @@
         </div>
 
         <!-- View Submitted Orders Section -->
-        <div class="form-container profile-section">
+        <div class="form-container profile-section" id="submitted-orders-section">
             <h1>Submitted Orders</h1>
             <table class="applications-table">
                 <thead>
@@ -87,7 +99,7 @@
         </div>
 
         <!-- Profile Section -->
-        <div class="form-container profile-section">
+        <div class="form-container profile-section" id="profile-section">
             <h1>My Profile</h1>
             <p><strong>Username:</strong> aa_user</p>
             <p><strong>Email:</strong> aa_user@example.com</p>

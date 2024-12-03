@@ -447,3 +447,54 @@
 .lt-home-page .applications-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+/* Navigation Bar Styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: blue;
+    padding: 15px 20px;
+    border-radius: 30px; /* Make the navigation bar oval */
+    margin: 20px auto; /* Add spacing around the navbar */
+    max-width: 90%; /* Center and limit the width */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    gap: 20px; /* Add spacing between navigation links */
+    margin: 0;
+    padding: 0;
+}
+
+.navbar ul li {
+    margin: 0;
+}
+
+.navbar ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 8px 12px; /* Add padding for better click area */
+    border-radius: 20px; /* Rounded links */
+    transition: background-color 0.3s ease;
+}
+
+.navbar ul li a:hover {
+    background-color: darkblue; /* Highlight on hover */
+    color: #fff;
+}
+
+.navbar .logo {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Add spacing between sections */
+.form-container {
+    margin: 40px 0; /* Add spacing between sections */
+}

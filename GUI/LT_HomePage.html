@@ -1,4 +1,3 @@
-<!-- LT: leitourgos Tmimatos Odikon Metaforon-->
 <!DOCTYPE html>
 <html lang="en">
     <div class="lt-home-page">
@@ -11,16 +10,29 @@
 </head>
 
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">Road Transport Department Officers </div>
+        <ul>
+            <li><a href="#welcome-section">Welcome</a></li>
+            <li><a href="#check-applications-section">Check Applications</a></li>
+            <li><a href="#upload-documents-section">Upload Documents</a></li>
+            <li><a href="#verified-applications-section">Verified Applications</a></li>
+            <li><a href="#profile-section">Profile</a></li>
+            <li><a href="login.html">Logout</a></li>
+        </ul>
+    </nav>
+
     <!-- Container -->
     <div class="container">
         <!-- Welcome Section -->
-        <div class="form-container welcome-section">
-            <h1>Welcome, LT User!</h1>
+        <div class="form-container welcome-section" id="welcome-section">
+            <h1>Welcome! Manage and verify transport applications easily!</h1>
             <p>Manage and verify applications along with their supporting documents.</p>
         </div>
 
         <!-- Check Applications Section -->
-        <div class="form-container sign-up">
+        <div class="form-container sign-up" id="check-applications-section">
             <form method="POST" action="check_applications.php">
                 <h1>Check Applications</h1>
                 <span>Search and verify submitted applications</span>
@@ -36,7 +48,7 @@
         </div>
 
         <!-- Upload Supporting Documents Section -->
-        <div class="form-container sign-in">
+        <div class="form-container sign-in" id="upload-documents-section">
             <h1>Upload Supporting Documents</h1>
             <form method="POST" action="upload_supporting_documents.php" enctype="multipart/form-data">
                 <label for="documentType">Document Type:</label>
@@ -53,8 +65,8 @@
             </form>
         </div>
 
-        <!-- View Submitted Applications Section -->
-        <div class="form-container profile-section">
+        <!-- View Verified Applications Section -->
+        <div class="form-container profile-section" id="verified-applications-section">
             <h1>Verified Applications</h1>
             <table class="applications-table">
                 <thead>
@@ -83,7 +95,7 @@
         </div>
 
         <!-- Profile Section -->
-        <div class="form-container profile-section">
+        <div class="form-container profile-section" id="profile-section">
             <h1>My Profile</h1>
             <p><strong>Username:</strong> lt_user</p>
             <p><strong>Email:</strong> lt_user@example.com</p>
