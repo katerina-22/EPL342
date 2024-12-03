@@ -1,0 +1,213 @@
+
+-- 1. Εισαγωγή νέου χρήστη
+CREATE PROCEDURE InsertUser
+    @Name NVARCHAR(100),
+    @Birthdate DATE,
+    @Address NVARCHAR(255),
+    @PhoneNumber NVARCHAR(15),
+    @RoleType NVARCHAR(50),
+    @Username NVARCHAR(50),
+    @Password NVARCHAR(50),
+    @Email NVARCHAR(100),
+    @Permission NVARCHAR(5) = 'ΑΧ'
+AS
+BEGIN
+    INSERT INTO [dbo].[USER] (
+        [Name], [Birthdate], [Address], [Phone_Number], [Role_Type],
+        [Username], [Password], [Email], [Permission]
+    )
+    VALUES (
+        @Name, @Birthdate, @Address, @PhoneNumber, @RoleType,
+        @Username, HASHBYTES('SHA2_256', @Password), @Email, @Permission
+    );
+    PRINT 'Ο χρήστης καταχωρήθηκε επιτυχώς.';
+END;
+
+-- 2. Εισαγωγή νέας αίτησης
+CREATE PROCEDURE InsertApplication
+    @UserID INT,
+    @CategoryNumber NVARCHAR(10),
+    @Status NVARCHAR(50) = 'Pending for Review'
+AS
+BEGIN
+    DECLARE @MaxApplications INT;
+
+    SELECT @MaxApplications = COUNT(*)
+    FROM [dbo].[APPLICATION]
+    WHERE [ID] = @UserID AND [CATEGORY_NUMBER] = @CategoryNumber;
+
+    IF (@MaxApplications >= 1 AND @CategoryNumber IN ('Γ1', 'Γ2', 'Γ3', 'Γ4', 'Γ5', 'Γ6', 'Γ7', 'Γ8'))
+    BEGIN
+        PRINT 'Ο χρήστης έχει ήδη υποβάλει την μέγιστη επιτρεπτή αίτηση σε αυτή την κατηγορία.';
+        RETURN;
+    END;
+
+    INSERT INTO [dbo].[APPLICATION] ([DATE], [ID], [CATEGORY_NUMBER], [Status])
+    VALUES (GETDATE(), @UserID, @CategoryNumber, @Status);
+
+    PRINT 'Η αίτηση καταχωρήθηκε επιτυχώς.';
+END;
+
+-- 3. Αναφορά αιτήσεων ανά χρήστη
+CREATE PROCEDURE GetUserApplications
+    @UserID INT
+AS
+BEGIN
+    SELECT [ApplicationID], [DATE], [CATEGORY_NUMBER], [Status]
+    FROM [dbo].[APPLICATION]
+    WHERE [ID] = @UserID;
+
+    PRINT 'Ανακτήθηκαν οι αιτήσεις για τον χρήστη.';
+END;
+
+-- 4. Ενημέρωση κατάστασης αίτησης
+CREATE PROCEDURE UpdateApplicationStatus
+    @ApplicationID INT,
+    @NewStatus NVARCHAR(50),
+    @Reason NVARCHAR(MAX)
+AS
+BEGIN
+    UPDATE [dbo].[APPLICATION]
+    SET [Status] = @NewStatus,
+        [StatusChangeReason] = @Reason,
+        [StatusChangeDate] = GETDATE()
+    WHERE [ApplicationID] = @ApplicationID;
+
+    PRINT 'Η κατάσταση της αίτησης ενημερώθηκε.';
+END;
+
+-- 5. Επιστροφή κατηγοριών επιχορηγήσεων
+CREATE PROCEDURE GetGrantCategories
+AS
+BEGIN
+    SELECT [CATEGORY_NUMBER], [DESCRIPTION]
+    FROM [dbo].[SUBSITY_CATEGORIES];
+
+    PRINT 'Ανακτήθηκαν οι κατηγορίες επιχορηγήσεων.';
+END;
+
+-- 6. Διαγραφή χρήστη
+CREATE PROCEDURE DeleteUser
+    @UserID INT
+AS
+BEGIN
+    DELETE FROM [dbo].[USER]
+    WHERE [ID] = @UserID;
+
+    PRINT 'Ο χρήστης διαγράφηκε επιτυχώς.';
+END;
+
+-- 7. Ανανέωση στοιχείων χρήστη
+CREATE PROCEDURE UpdateUserDetails
+    @UserID INT,
+    @NewEmail NVARCHAR(100),
+    @NewPhoneNumber NVARCHAR(15)
+AS
+BEGIN
+    UPDATE [dbo].[USER]
+    SET [Email] = @NewEmail,
+        [Phone_Number] = @NewPhoneNumber
+    WHERE [ID] = @UserID;
+
+    PRINT 'Τα στοιχεία του χρήστη ενημερώθηκαν.';
+END;
+
+-- 8. Αποδοχή ή απόρριψη αίτησης
+CREATE PROCEDURE ApproveRejectApplication
+    @ApplicationID INT,
+    @NewStatus NVARCHAR(50),
+    @ApprovalComment NVARCHAR(MAX)
+AS
+BEGIN
+    UPDATE [dbo].[APPLICATION]
+    SET [Status] = @NewStatus,
+        [ApprovalComment] = @ApprovalComment,
+        [StatusChangeDate] = GETDATE()
+    WHERE [ApplicationID] = @ApplicationID;
+
+    PRINT 'Η αίτηση ενημερώθηκε.';
+END;
+
+-- 9. Αναφορά επιτυχών αιτήσεων
+CREATE PROCEDURE GetSuccessfulApplications
+AS
+BEGIN
+    SELECT [ApplicationID], [ID], [CATEGORY_NUMBER], [DATE]
+    FROM [dbo].[APPLICATION]
+    WHERE [Status] = 'Approved';
+
+    PRINT 'Ανακτήθηκαν οι επιτυχείς αιτήσεις.';
+END;
+
+-- 10. Υπολογισμός μέσου ποσού επιχορήγησης
+CREATE PROCEDURE CalculateAverageGrantAmount
+AS
+BEGIN
+    SELECT AVG([GrantAmount]) AS AverageGrant
+    FROM [dbo].[APPLICATION];
+
+    PRINT 'Ο μέσος όρος υπολογίστηκε.';
+END;
+
+-- 11. Εμφάνιση χρηστών με περισσότερες αιτήσεις
+CREATE PROCEDURE GetUsersWithMostApplications
+AS
+BEGIN
+    SELECT TOP 10 [ID], COUNT(*) AS ApplicationCount
+    FROM [dbo].[APPLICATION]
+    GROUP BY [ID]
+    ORDER BY ApplicationCount DESC;
+
+    PRINT 'Ανακτήθηκαν οι χρήστες με τις περισσότερες αιτήσεις.';
+END;
+
+-- 12. Αιτήσεις σε εκκρεμότητα ανά κατηγορία
+CREATE PROCEDURE GetPendingApplicationsByCategory
+    @CategoryNumber NVARCHAR(10)
+AS
+BEGIN
+    SELECT [ApplicationID], [ID], [DATE]
+    FROM [dbo].[APPLICATION]
+    WHERE [CATEGORY_NUMBER] = @CategoryNumber AND [Status] = 'Pending';
+
+    PRINT 'Ανακτήθηκαν οι εκκρεμείς αιτήσεις για την κατηγορία.';
+END;
+
+-- 13. Αιτήσεις ανά περίοδο
+CREATE PROCEDURE GetApplicationsByDateRange
+    @StartDate DATE,
+    @EndDate DATE
+AS
+BEGIN
+    SELECT [ApplicationID], [ID], [DATE], [CATEGORY_NUMBER]
+    FROM [dbo].[APPLICATION]
+    WHERE [DATE] BETWEEN @StartDate AND @EndDate;
+
+    PRINT 'Ανακτήθηκαν οι αιτήσεις για την καθορισμένη περίοδο.';
+END;
+
+-- 14. Επαλήθευση ύπαρξης χρήστη
+CREATE PROCEDURE CheckUserExists
+    @Username NVARCHAR(50)
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM [dbo].[USER] WHERE [Username] = @Username)
+    BEGIN
+        PRINT 'Ο χρήστης υπάρχει.';
+    END
+    ELSE
+    BEGIN
+        PRINT 'Ο χρήστης δεν βρέθηκε.';
+    END;
+END;
+
+-- 15. Δημιουργία αναφοράς επιχορηγήσεων
+CREATE PROCEDURE GenerateGrantReport
+AS
+BEGIN
+    SELECT [CATEGORY_NUMBER], COUNT(*) AS ApplicationCount, SUM([GrantAmount]) AS TotalGrants
+    FROM [dbo].[APPLICATION]
+    GROUP BY [CATEGORY_NUMBER];
+
+    PRINT 'Η αναφορά επιχορηγήσεων δημιουργήθηκε.';
+END;
