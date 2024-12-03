@@ -7,12 +7,41 @@
     <title>LT Home Page</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <script>
+        // Client-side validation for better user experience
+        function validateCheckApplicationForm() {
+            const applicationId = document.getElementById("applicationId").value.trim();
+            const comments = document.getElementById("comments").value.trim();
+
+            if (applicationId === "") {
+                alert("Please enter an Application ID.");
+                return false;
+            }
+
+            if (comments.length < 10) {
+                alert("Comments must be at least 10 characters long.");
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateDocumentUpload() {
+            const fileInput = document.getElementById("file");
+            if (!fileInput.files.length) {
+                alert("Please select a file to upload.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+ 
 </head>
 
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <div class="logo">Road Transport Department Officers </div>
+        <div class="logo">LT Portal</div>
         <ul>
             <li><a href="#welcome-section">Welcome</a></li>
             <li><a href="#check-applications-section">Check Applications</a></li>
@@ -27,21 +56,27 @@
     <div class="container">
         <!-- Welcome Section -->
         <div class="form-container welcome-section" id="welcome-section">
-            <h1>Welcome! Manage and verify transport applications easily!</h1>
-            <p>Manage and verify applications along with their supporting documents.</p>
+            <h1>Welcome, LT User!</h1>
+            <p>Manage and verify applications along with their supporting documents here.</p>
         </div>
 
         <!-- Check Applications Section -->
         <div class="form-container sign-up" id="check-applications-section">
-            <form method="POST" action="check_applications.php">
+            <form method="POST" action="check_applications.php" onsubmit="return validateCheckApplicationForm()">
                 <h1>Check Applications</h1>
                 <span>Search and verify submitted applications</span>
 
-                <label for="applicationId">Application ID:</label>
-                <input type="text" id="applicationId" name="applicationId" placeholder="Enter Application ID" required>
+                <!-- Application ID -->
+                <div class="form-group">
+                    <label for="applicationId">Application ID:</label>
+                    <input type="text" id="applicationId" name="applicationId" placeholder="Enter Application ID" required>
+                </div>
 
-                <label for="comments">Verification Comments:</label>
-                <textarea id="comments" name="comments" rows="5" placeholder="Enter verification details..." required></textarea>
+                <!-- Comments -->
+                <div class="form-group">
+                    <label for="comments">Verification Comments:</label>
+                    <textarea id="comments" name="comments" rows="5" placeholder="Enter verification details..." required></textarea>
+                </div>
 
                 <button type="submit">Verify Application</button>
             </form>
@@ -50,22 +85,29 @@
         <!-- Upload Supporting Documents Section -->
         <div class="form-container sign-in" id="upload-documents-section">
             <h1>Upload Supporting Documents</h1>
-            <form method="POST" action="upload_supporting_documents.php" enctype="multipart/form-data">
-                <label for="documentType">Document Type:</label>
-                <select id="documentType" name="documentType" required>
-                    <option value="Inspection Report">Inspection Report</option>
-                    <option value="Approval Certificate">Approval Certificate</option>
-                    <option value="Other">Other</option>
-                </select>
+            <form method="POST" action="upload_supporting_documents.php" enctype="multipart/form-data" onsubmit="return validateDocumentUpload()">
+                <!-- Document Type -->
+                <div class="form-group">
+                    <label for="documentType">Document Type:</label>
+                    <select id="documentType" name="documentType" required>
+                        <option value="" disabled selected>Select Document Type</option>
+                        <option value="Inspection Report">Inspection Report</option>
+                        <option value="Approval Certificate">Approval Certificate</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
 
-                <label for="file">Choose File:</label>
-                <input type="file" id="file" name="file" required>
+                <!-- File Upload -->
+                <div class="form-group">
+                    <label for="file">Choose File:</label>
+                    <input type="file" id="file" name="file" required>
+                </div>
 
                 <button type="submit">Upload Document</button>
             </form>
         </div>
 
-        <!-- View Verified Applications Section -->
+        <!-- Verified Applications Section -->
         <div class="form-container profile-section" id="verified-applications-section">
             <h1>Verified Applications</h1>
             <table class="applications-table">

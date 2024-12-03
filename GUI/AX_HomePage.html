@@ -7,12 +7,32 @@
     <title>AX Home Page</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <script>
+        // Client-side validation for better user experience
+        function validateApplicationForm() {
+            const applicationType = document.getElementById("applicationType").value;
+            const details = document.getElementById("details").value.trim();
+
+            if (!applicationType || applicationType === "") {
+                alert("Please select an application type.");
+                return false;
+            }
+
+            if (details.length < 10) {
+                alert("Application details must be at least 10 characters long.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+    
 </head>
 
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <div class="logo"> </div>
+        <div class="logo">AX Portal</div>
         <ul>
             <li><a href="#welcome-section">Welcome</a></li>
             <li><a href="#submit-application-section">Submit Application</a></li>
@@ -26,31 +46,38 @@
     <div class="container">
         <!-- Welcome Section -->
         <div class="form-container welcome-section" id="welcome-section">
-            <h1>Welcome! Access and manage your services with ease!</h1>
-            <p>Manage your grant applications here.</p>
+            <h1>Welcome!</h1>
+            <p>Apply for grants and track your application status here.</p>
         </div>
 
-        <!-- Application Submission Section -->
+        <!-- Submit Application Section -->
         <div class="form-container sign-up" id="submit-application-section">
-            <form method="POST" action="submit_application.php">
+            <form method="POST" action="submit_application.php" onsubmit="return validateApplicationForm()">
                 <h1>Submit Application</h1>
-                <span>Complete the details below</span>
+                <span>Fill in the details below</span>
 
-                <label for="applicationType">Application Type:</label>
-                <select id="applicationType" name="applicationType" required>
-                    <option value="Type1">Type 1</option>
-                    <option value="Type2">Type 2</option>
-                    <option value="Type3">Type 3</option>
-                </select>
+                <!-- Application Type -->
+                <div class="form-group">
+                    <label for="applicationType">Application Type:</label>
+                    <select id="applicationType" name="applicationType" required>
+                        <option value="" disabled selected>Select Application Type</option>
+                        <option value="Type1">Type 1</option>
+                        <option value="Type2">Type 2</option>
+                        <option value="Type3">Type 3</option>
+                    </select>
+                </div>
 
-                <label for="details">Application Details:</label>
-                <textarea id="details" name="details" rows="5" placeholder="Enter details about your application..." required></textarea>
+                <!-- Application Details -->
+                <div class="form-group">
+                    <label for="details">Application Details:</label>
+                    <textarea id="details" name="details" rows="5" placeholder="Enter details about your application..." required></textarea>
+                </div>
 
-                <button type="submit">Submit</button>
+                <button type="submit">Submit Application</button>
             </form>
         </div>
 
-        <!-- View Applications Section -->
+        <!-- My Applications Section -->
         <div class="form-container sign-in" id="my-applications-section">
             <h1>My Applications</h1>
             <table class="applications-table">
