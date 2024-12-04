@@ -143,10 +143,24 @@
 
         <!-- Profile Section -->
         <div class="form-container profile-section" id="profile-section">
-            <h1>My Profile</h1>
-            <p><strong>Username:</strong> aa_user</p>
-            <p><strong>Email:</strong> aa_user@example.com</p>
-            <p><strong>Registered On:</strong> 2024-01-15</p>
+            <script>
+                document.addEventListener("DOMContentLoaded", async () => {
+                    try {
+                        const response = await fetch('get_profile.php');
+                        if (!response.ok) throw new Error("Failed to load profile");
+            
+                        const data = await response.json();
+                        document.querySelector("#profile-section p:nth-child(2)").textContent = `Username: ${data.username}`;
+                        document.querySelector("#profile-section p:nth-child(3)").textContent = `Email: ${data.email}`;
+                        document.querySelector("#profile-section p:nth-child(4)").textContent = `Registered On: ${data.registered_on}`;
+                    } catch (error) {
+                        console.error(error);
+                        alert("Error fetching profile information. Please log in again.");
+                        window.location.href = "login.html";
+                    }
+                });
+            </script>
+            
             <a href="login.html" class="logout-link">Logout</a>
         </div>
     </div>
