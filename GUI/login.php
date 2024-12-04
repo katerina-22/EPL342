@@ -1,5 +1,6 @@
 <?php
 // login.php
+session_start(); // Start the session
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Retrieve username and password from POST request
@@ -39,6 +40,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (sqlsrv_has_rows($stmt)) {
         $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
         $permission = $row['Permission'];
+
+        //
+        // Store user info in the session
+        $_SESSION['username'] = $row['Username'];
+        $_SESSION['email'] = $row['Email'];
+        $_SESSION['permission'] = $permission;
+        //
 
         // Map user categories to pages
         $userPages = [
