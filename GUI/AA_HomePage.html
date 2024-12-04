@@ -143,26 +143,28 @@
 
         <!-- Profile Section -->
         <div class="form-container profile-section" id="profile-section">
-            <script>
-                document.addEventListener("DOMContentLoaded", async () => {
-                    try {
-                        const response = await fetch('get_profile.php');
-                        if (!response.ok) throw new Error("Failed to load profile");
-            
-                        const data = await response.json();
-                        document.querySelector("#profile-section p:nth-child(2)").textContent = `Username: ${data.username}`;
-                        document.querySelector("#profile-section p:nth-child(3)").textContent = `Email: ${data.email}`;
-                        document.querySelector("#profile-section p:nth-child(4)").textContent = `Registered On: ${data.registered_on}`;
-                    } catch (error) {
-                        console.error(error);
-                        alert("Error fetching profile information. Please log in again.");
-                        window.location.href = "login.html";
-                    }
-                });
-            </script>
-            
-            <a href="login.html" class="logout-link">Logout</a>
+            <h1>My Profile</h1>
+            <p><strong>Username:</strong> <span id="username">Loading...</span></p>
+            <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+            <a href="logout.php" class="logout-link">Logout</a>
         </div>
+        
+        <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const response = await fetch('get_profile.php');
+                if (!response.ok) throw new Error("Failed to fetch profile");
+        
+                const data = await response.json();
+                document.getElementById("username").textContent = data.username;
+                document.getElementById("email").textContent = data.email;
+            } catch (error) {
+                console.error(error);
+                alert("Error loading profile information. Please log in again.");
+                window.location.href = "login.html";
+            }
+        });
+        </script>        
     </div>
 </body>
 </div>
