@@ -1,18 +1,6 @@
 <?php
 session_start();
-
-// db_connection.php
-$servername = "mssql.cs.ucy.ac.cy";
-$dbUsername = "canton05";
-$dbPassword = "zBUMVpE4";
-$dbName = "canton05";
-
-$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
-
-// Check the connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_connection.php'; // Include the database connection
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -33,7 +21,6 @@ if ($conn === false) {
 // Fetch user data from the database
 $sql = "SELECT username, email FROM [USER] WHERE id = ?";
 $stmt = $conn->prepare($sql);
-
 if (!$stmt) {
     http_response_code(500);
     echo json_encode(["error" => "Failed to prepare statement"]);
@@ -52,7 +39,7 @@ if (!$stmt->execute()) {
 $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
-    echo json_encode($user);
+    echo json_encode($user); // Return user data as JSON
 } else {
     http_response_code(404);
     echo json_encode(["error" => "User not found"]);

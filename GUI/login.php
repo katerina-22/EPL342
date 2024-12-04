@@ -41,13 +41,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
         $permission = $row['Permission'];
 
-        //
-        // Store user info in the session
-        $_SESSION['username'] = $row['Username'];
-        $_SESSION['email'] = $row['Email'];
-        $_SESSION['permission'] = $permission;
-        //
-
         // Map user categories to pages
         $userPages = [
             "ΑΧ" => "AX_HomePage.html",
@@ -67,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo "<script>alert('Invalid username or password!');</script>";
         echo "<script>window.location.href = 'login.html';</script>";
     }
-
+    
     // Free resources and close connection
     sqlsrv_free_stmt($stmt);
     sqlsrv_close($conn);

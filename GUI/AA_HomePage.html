@@ -56,7 +56,8 @@
     <div class="container">
         <!-- Welcome Section -->
         <div class="form-container welcome-section" id="welcome-section">
-            <h1>Welcome, Car Dealer!</h1>
+           <!-- <h1>Welcome, Car Dealer!</h1> -->
+            <h1>Welcome, <span id="welcome-username">Loading...</span>!</h1>
             <p>Manage your vehicle orders and upload required documents here.</p>
         </div>
 
@@ -148,23 +149,27 @@
             <p><strong>Email:</strong> <span id="email">Loading...</span></p>
             <a href="login.html" class="logout-link">Logout</a>
         </div>
-        
+
+        <!-- JavaScript to Fetch and Update Username -->
         <script>
             document.addEventListener("DOMContentLoaded", async () => {
                 try {
-                    const response = await fetch('get_profile.php');
+                    const response = await fetch('get_profile.php'); // Fetch user data
                     if (!response.ok) throw new Error("Failed to load profile");
             
                     const data = await response.json();
+                    // Update the welcome message and profile section
+                    document.getElementById("welcome-username").textContent = data.username;
                     document.getElementById("username").textContent = data.username;
                     document.getElementById("email").textContent = data.email;
                 } catch (error) {
                     console.error(error);
                     alert("Error fetching profile. Please log in again.");
-                    window.location.href = "login.html";
+                    window.location.href = "login.html"; // Redirect to login page if error occurs
                 }
             });
-            </script> 
+            </script>
+            
     </div>
 </body>
 </div>
