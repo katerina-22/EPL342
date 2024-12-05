@@ -1,3 +1,14 @@
+<?php
+session_start(); // Start the session
+
+// Check if the user is logged in
+if (!isset($_SESSION['username']) || !isset($_SESSION['email'])) {
+    // Redirect to the login page if not logged in
+    header("Location: login.html");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <div class="lt-home-page">
@@ -44,9 +55,9 @@
         <div class="logo">LT Portal</div>
         <ul>
             <li><a href="#welcome-section">Welcome</a></li>
-            <li><a href="#check-applications-section">Check Applications</a></li>
+            <li><a href="#manage-orders-section">Manage Orders</a></li>
             <li><a href="#upload-documents-section">Upload Documents</a></li>
-            <li><a href="#verified-applications-section">Verified Applications</a></li>
+            <li><a href="#submitted-orders-section">Submitted Orders</a></li>
             <li><a href="#profile-section">Profile</a></li>
             <li><a href="login.html">Logout</a></li>
         </ul>
@@ -56,44 +67,52 @@
     <div class="container">
         <!-- Welcome Section -->
         <div class="form-container welcome-section" id="welcome-section">
-            <h1>Welcome, LT User!</h1>
-            <p>Manage and verify applications along with their supporting documents here.</p>
+           <!-- <h1>Welcome, Car Dealer!</h1> -->
+            <h1>Welcome, <span id="welcome-username">
+                <?php echo htmlspecialchars($_SESSION['username']); ?>
+                </span>!</h1>
+            <p>Manage your vehicle orders and upload required documents here.</p>
         </div>
 
-        <!-- Check Applications Section -->
-        <div class="form-container sign-up" id="check-applications-section">
-            <form method="POST" action="check_applications.php" onsubmit="return validateCheckApplicationForm()">
-                <h1>Check Applications</h1>
-                <span>Search and verify submitted applications</span>
+        <!-- Manage Orders Section -->
+        <div class="form-container sign-up" id="manage-orders-section">
+            <form method="POST" action="manage_orders.php" onsubmit="return validateOrderForm()">
+                <h1>Manage Orders</h1>
+                <span>View, create, or update vehicle orders</span>
 
-                <!-- Application ID -->
+                <!-- Order Type -->
                 <div class="form-group">
-                    <label for="applicationId">Application ID:</label>
-                    <input type="text" id="applicationId" name="applicationId" placeholder="Enter Application ID" required>
+                    <label for="orderType">Order Type:</label>
+                    <select id="orderType" name="orderType" required>
+                        <option value="" disabled selected>Select Order Type</option>
+                        <option value="New">New Order</option>
+                        <option value="Update">Update Existing Order</option>
+                        <option value="Cancel">Cancel Order</option>
+                    </select>
                 </div>
 
-                <!-- Comments -->
+                <!-- Order Details -->
                 <div class="form-group">
-                    <label for="comments">Verification Comments:</label>
-                    <textarea id="comments" name="comments" rows="5" placeholder="Enter verification details..." required></textarea>
+                    <label for="orderDetails">Order Details:</label>
+                    <textarea id="orderDetails" name="orderDetails" rows="5" placeholder="Enter details about the order..." required></textarea>
                 </div>
 
-                <button type="submit">Verify Application</button>
+                <button type="submit">Submit Order</button>
             </form>
         </div>
 
-        <!-- Upload Supporting Documents Section -->
+        <!-- Upload Documents Section -->
         <div class="form-container sign-in" id="upload-documents-section">
-            <h1>Upload Supporting Documents</h1>
-            <form method="POST" action="upload_supporting_documents.php" enctype="multipart/form-data" onsubmit="return validateDocumentUpload()">
+            <h1>Upload Documents</h1>
+            <form method="POST" action="upload_documents.php" enctype="multipart/form-data" onsubmit="return validateDocumentUpload()">
                 <!-- Document Type -->
                 <div class="form-group">
                     <label for="documentType">Document Type:</label>
                     <select id="documentType" name="documentType" required>
                         <option value="" disabled selected>Select Document Type</option>
-                        <option value="Inspection Report">Inspection Report</option>
-                        <option value="Approval Certificate">Approval Certificate</option>
-                        <option value="Other">Other</option>
+                        <option value="Invoice">Invoice</option>
+                        <option value="Vehicle Registration">Vehicle Registration</option>
+                        <option value="Warranty">Warranty Document</option>
                     </select>
                 </div>
 
@@ -107,31 +126,21 @@
             </form>
         </div>
 
-        <!-- Verified Applications Section -->
-        <div class="form-container profile-section" id="verified-applications-section">
-            <h1>Verified Applications</h1>
+        <!-- View Submitted Orders Section -->
+        <div class="form-container profile-section" id="submitted-orders-section">
+            <h1>Submitted Orders</h1>
             <table class="applications-table">
+                 <!-- Collumns -->
                 <thead>
                     <tr>
                         <th>Application ID</th>
+                        <th>Type</th>
                         <th>Status</th>
-                        <th>Verified On</th>
-                        <th>Comments</th>
+                        <th>Submitted On</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>32145</td>
-                        <td>Approved</td>
-                        <td>2024-12-01</td>
-                        <td>All documents verified</td>
-                    </tr>
-                    <tr>
-                        <td>67890</td>
-                        <td>Rejected</td>
-                        <td>2024-11-25</td>
-                        <td>Missing documents</td>
-                    </tr>
+                   <!-- db -->
                 </tbody>
             </table>
         </div>
@@ -139,11 +148,15 @@
         <!-- Profile Section -->
         <div class="form-container profile-section" id="profile-section">
             <h1>My Profile</h1>
-            <p><strong>Username:</strong> lt_user</p>
-            <p><strong>Email:</strong> lt_user@example.com</p>
-            <p><strong>Registered On:</strong> 2024-01-15</p>
+            <!-- Changing Loading... into the users info -->
+            <p><strong>Username:</strong> <span id="username">
+                <?php echo htmlspecialchars($_SESSION['username']); ?>
+            </span></p>
+            <p><strong>Email:</strong> <span id="email">
+                <?php echo htmlspecialchars($_SESSION['email']); ?>
+            </span></p>
             <a href="login.html" class="logout-link">Logout</a>
-        </div>
+        </div>            
     </div>
 </body>
 </div>

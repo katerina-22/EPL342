@@ -1,3 +1,14 @@
+<?php
+session_start(); // Start the session
+
+// Check if the user is logged in
+if (!isset($_SESSION['username']) || !isset($_SESSION['email'])) {
+    // Redirect to the login page if not logged in
+    header("Location: login.html");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <div class="aa-home-page">
@@ -57,7 +68,9 @@
         <!-- Welcome Section -->
         <div class="form-container welcome-section" id="welcome-section">
            <!-- <h1>Welcome, Car Dealer!</h1> -->
-            <h1>Welcome, <span id="welcome-username">Loading...</span>!</h1>
+            <h1>Welcome, <span id="welcome-username">
+                <?php echo htmlspecialchars($_SESSION['username']); ?>
+                </span>!</h1>
             <p>Manage your vehicle orders and upload required documents here.</p>
         </div>
 
@@ -117,27 +130,17 @@
         <div class="form-container profile-section" id="submitted-orders-section">
             <h1>Submitted Orders</h1>
             <table class="applications-table">
+                 <!-- Collumns -->
                 <thead>
                     <tr>
-                        <th>Order ID</th>
+                        <th>Application ID</th>
                         <th>Type</th>
                         <th>Status</th>
                         <th>Submitted On</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>54321</td>
-                        <td>New</td>
-                        <td>Pending</td>
-                        <td>2024-12-01</td>
-                    </tr>
-                    <tr>
-                        <td>98765</td>
-                        <td>Update</td>
-                        <td>Approved</td>
-                        <td>2024-11-20</td>
-                    </tr>
+                   <!-- db -->
                 </tbody>
             </table>
         </div>
@@ -145,31 +148,15 @@
         <!-- Profile Section -->
         <div class="form-container profile-section" id="profile-section">
             <h1>My Profile</h1>
-            <p><strong>Username:</strong> <span id="username">Loading...</span></p>
-            <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+            <!-- Changing Loading... into the users info -->
+            <p><strong>Username:</strong> <span id="username">
+                <?php echo htmlspecialchars($_SESSION['username']); ?>
+            </span></p>
+            <p><strong>Email:</strong> <span id="email">
+                <?php echo htmlspecialchars($_SESSION['email']); ?>
+            </span></p>
             <a href="login.html" class="logout-link">Logout</a>
-        </div>
-
-        <!-- JavaScript to Fetch and Update Username -->
-        <script>
-            document.addEventListener("DOMContentLoaded", async () => {
-                try {
-                    const response = await fetch('get_profile.php'); // Fetch user data
-                    if (!response.ok) throw new Error("Failed to load profile");
-            
-                    const data = await response.json();
-                    // Update the welcome message and profile section
-                    document.getElementById("welcome-username").textContent = data.username;
-                    document.getElementById("username").textContent = data.username;
-                    document.getElementById("email").textContent = data.email;
-                } catch (error) {
-                    console.error(error);
-                    alert("Error fetching profile. Please log in again.");
-                    window.location.href = "login.html"; // Redirect to login page if error occurs
-                }
-            });
-            </script>
-            
+        </div>            
     </div>
 </body>
 </div>

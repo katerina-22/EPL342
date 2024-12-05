@@ -12,9 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Database credentials
     $serverName = "mssql.cs.ucy.ac.cy"; // Replace with your server name
     $connectionOptions = [
-        "Database" => "canton05",      // Replace with your database name
-        "Uid" => "canton05",           // Replace with your username
-        "PWD" => "zBUMVpE4"            // Replace with your password
+        "Database" => "ccleri02",      // Replace with your database name
+        "Uid" => "ccleri02",           // Replace with your username
+        "PWD" => "adsBjAZX"            // Replace with your password
     ];
 
     // Establish database connection
